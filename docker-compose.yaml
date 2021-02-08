@@ -1,0 +1,53 @@
+version: '2'
+volumes:
+    ttninfluxdbvol:
+
+services:
+    ttninfluxdb:
+        image: library/influxdb
+        restart: always
+        container_name: ttninfluxdb
+        ports:
+            - "127.0.0.1:29080:8086"
+        volumes:
+            - ttninfluxdbvol:/var/lib/influxdb
+        environment:
+            - INFLUXDB_DB=ttndata
+            - INFLUXDB_HTTP_AUTH_ENABLED=true
+            - INFLUXDB_ADMIN_USER=$INFLUXDB_ADMIN_USER
+            - INFLUXDB_ADMIN_PASSWORD=$INFLUXDB_ADMIN_PASSWORD
+            - INFLUXDB_USER=$INFLUXDB_USER
+            - INFLUXDB_USER_PASSWORD=$INFLUXDB_USER_PASSWORD
+            - INFLUXDB_READ_USER=$INFLUXDB_READ_USER
+            - INFLUXDB_READ_USER_PASSWORD=$INFLUXDB_READ_USER_PASSWORD
+            - INFLUXDB_WRITE_USER=$INFLUXDB_WRITE_USER
+            - INFLUXDB_WRITE_USER_PASSWORD=$INFLUXDB_WRITE_USER_PASSWORD
+    ttnchronograf:
+        image: chronograf
+        restart: always
+        container_name: ttnchronograf
+        ports: 
+            - "127.0.0.1:29081:8888"
+    ttngrafana:
+        # may need a fixed version, otherwise it is current master branch
+        image: grafana/grafana
+        restart: always
+        container_name: ttngrafana
+        ports:
+            - "127.0.0.1:29082:3000"
+    ttntelegraf:
+        image: telegraf
+        restart: always
+        container_name: ttntelegraf
+        ports:
+            - "127.0.0.1:29083:8094"
+        volumes:
+            - ./telegraf/telegraf.conf:/etc/telegraf/telegraf.conf:ro
+ #   ttnmosquitto:
+ #       image: eclipse-mosquitto
+ #       container_name: ttnmosquitto
+ #       restart: always
+ #       ports:
+ #           - "21883:1883"
+ #           - "127.0.0.1:29001:9001"
+

@@ -1,0 +1,23 @@
+# cp to telegraf/telegraf.conf, fill in credentials and chmod go-rwx 
+# Configuration for sending metrics to InfluxDB
+[[outputs.influxdb]]
+    urls = ["http://ttninfluxdb:29080"]
+    database_tag = "ttndata"
+    ## HTTP Basic Auth
+    username = "$INFLUXDB_USER"
+    password = "$INFLUXDB_USER_PASSWORD"
+    # exclude_database_tag = false
+    ## HTTP User-Agent
+    user_agent = "ttntelegraf"
+
+
+[[inputs.mqtt_consumer]]
+    servers = ["tcp://eu.thethings.network:1883"]
+    qos = 0
+    connection_timeout = "30s"
+    topics = [ "+/devices/+/up" ]
+    client_id = "telegraf"
+    username = "$YOUR_APPNAME"
+    password = "$YOUR_APPKEY"
+    data_format = "json"
+
